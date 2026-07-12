@@ -162,21 +162,51 @@ def logout():
 @app.route('/parent_dashboard')
 @login_required
 def parent_dashboard():
-
+    # Only allow parents to access this dashboard
+    if current_user.user_type != 'parent':
+        flash('Unauthorized access!')
+        return redirect(url_for('child_dashboard'))
+        
     alerts = Alert.query.order_by(Alert.timestamp.desc()).all()
-
     return render_template(
         'parent_dashboard.html',
+        parent=current_user,  # Passes the logged-in parent details
         alerts=alerts
     )
 
 
 @app.route('/child_dashboard')
-@login_required
+@login_required 
 def child_dashboard():
+    # Security: Only allow child accounts to access this dashboard
+    if current_user.user_type == 'parent':
+        flash('Unauthorized access!')
+        return redirect(url_for('parent_dashboard'))
+    
+    # Pass 'child' as the current logged-in user
+    # Pass 'parent' as a fallback dictionary placeholder so your template doesn't crash
+    return render_template(
+        'child_dashboard.html', 
+        child=current_user, 
+        parent={"username": "Parent Administrator"}
+    )
 
-    return render_template('child_dashboard.html')
-
+@app.route('/emergency', methods=['POST'])
+@login_required
+def emergency():
+    # Example action: Create a real-time critical alert
+    new_alert = Alert(
+        message=f"🚨 EMERGENCY SOS triggered by {current_user.username}!",
+        alert_type="Critical"
+    )
+    db.session.add(new_alert)
+    db.session.commit()
+    
+    # Broadcast to parents via SocketIO if needed
+    socketio.emit('new_emergency_alert', {'message': new_alert.message})
+    
+    flash('Emergency alert sent to parents!')
+    return redirect(url_for('child_dashboard'))
 
 # ---------------- MAIN ----------------
 

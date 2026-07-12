@@ -163,39 +163,32 @@ start browsing.</p>
     </div> 
 </div> 
  
-<!-- Emergency Modal --> 
 <div class="modal fade" id="emergencyModal" tabindex="-1" aria-hidden="true"> 
     <div class="modal-dialog"> 
         <div class="modal-content"> 
             <div class="modal-header"> 
                 <h5 class="modal-title">Send Emergency Alert</h5> 
-
- 
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria
-label="Close"></button> 
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
             </div> 
-            <form method="POST" action="{{ url_for('emergency') }}"> 
-                {{ form.hidden_tag() }} 
+            <form id="emergencyForm" method="POST" action="#"> 
                 <div class="modal-body"> 
                     <p class="alert alert-warning"> 
                         <i class="fas fa-exclamation-triangle me-2"></i> 
                         This will send an immediate emergency alert to your parent. 
                     </p> 
-                    <div class="mb-3"> 
-                        <label for="{{ form.message.id }}" class="form-label">Message 
-(optional)</label> 
-                        {{ form.message(class="form-control", rows=3, placeholder="Tell your parent 
-what's happening...") }} 
+                    <div class="mb-3">
+                        <label for="emergencyMessage" class="form-label">Message</label>
+                        <textarea id="emergencyMessage" name="message" class="form-control" rows="3" placeholder="Tell your parent what's happening..."></textarea>
                     </div> 
                 </div> 
                 <div class="modal-footer"> 
-                    <button type="button" class="btn btn-secondary" data-bs
-dismiss="modal">Cancel</button> 
-                    {{ form.submit(class="btn btn-danger") }} 
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> 
+                    <button type="submit" class="btn btn-danger">Send Alert</button> 
                 </div> 
             </form> 
         </div> 
     </div> 
+</div>
  
 </div> 
 {% endblock %} 
